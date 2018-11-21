@@ -12,6 +12,9 @@ api = tweepy.API(auth)
 file_name = 'last_seen_id.txt'
 
 
+# TODO integrate youtube api 3 into the twitter bot response
+
+
 def retrieve_last_seen_id(file_name):
     f_read = open(file_name, 'r')
     last_seen_id = int(f_read.read().strip())
@@ -41,14 +44,20 @@ def reply_to_tweets():
         if '!details' in mention.full_text.lower():
             try:
                 # This nightmare right here gets the expanded_url from a tweet.
-                # If it fails to find a youtube link, it hits an exception and asks for a proper link
+                # If it fails to find a link, it hits an exception and asks for a proper link
                 urls = str(mention.entities.get(
                     "urls")).split(",")
                 expanded_url = urls[1]
                 expanded_url = expanded_url[18:len(expanded_url)-1]
-                api.update_status(
-                    "Functionality is not yet working for this feature.", last_seen_id)
-                # print(expanded_url)
+                if 'youtube.com/watchv?=' in expanded_url:
+                    # If you want an @mention to go out from the bot, add the following to the update_status:
+                    # '@' + mention.user.screen_name
+                    api.update_status(
+                        "Functionality is not yet working for this feature.", last_seen_id)
+                else:
+                    api.update_status(
+                        "Please include a youtube link to a specific video.")
+                    # print(expanded_url)
             except:
                 # print("No subject content found.")
                 api.update_status(
@@ -62,5 +71,5 @@ def reply_to_tweets():
 reply_to_tweets()
 # Every 15 seconds get all new mentions, and run reply_to_tweets()
 # while True:
-# reply_to_tweets()
-# time.sleep(15)
+#     reply_to_tweets()
+#     time.sleep(15)
