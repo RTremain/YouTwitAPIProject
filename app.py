@@ -40,21 +40,27 @@ def reply_to_tweets():
 
         if '!details' in mention.full_text.lower():
             try:
+                # This nightmare right here gets the expanded_url from a tweet.
+                # If it fails to find a youtube link, it hits an exception and asks for a proper link
                 urls = str(mention.entities.get(
                     "urls")).split(",")
                 expanded_url = urls[1]
                 expanded_url = expanded_url[18:len(expanded_url)-1]
-                print(expanded_url)
+                api.update_status(
+                    "Functionality is not yet working for this feature.", last_seen_id)
+                # print(expanded_url)
             except:
                 # print("No subject content found.")
-                api.update_status("Please include a youtube link to analyze.")
+                api.update_status(
+                    "Please include a youtube link to analyze.", last_seen_id)
         else:
             #print('No Request Found')
             api.update_status(
-                "Please include one of the requests in my profile.")
+                "Please include one of the requests in my profile.", last_seen_id)
 
 
 reply_to_tweets()
+# Every 15 seconds get all new mentions, and run reply_to_tweets()
 # while True:
 # reply_to_tweets()
 # time.sleep(15)
