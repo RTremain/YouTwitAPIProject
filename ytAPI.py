@@ -17,8 +17,7 @@ test_video_id = 'sQYJJFLxaaw'
 test_video_id_containing_special_characters = 'Vzl93kp37oM'
 
 
-def get_video_object (str)
-    video_id = str
+def get_video_object (video_id)
     video_api_url = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id="
     video_api_request = video_api_url + video_id + "&key=" + GOOGLE_API_KEY
     print(video_api_request)
