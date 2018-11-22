@@ -11,7 +11,7 @@ video_id = test_video_id
 api_url = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id="
 
 api_request = api_url + video_id + "&key=" + GOOGLE_API_KEY
-
+print(api_request)
 response = urllib.request.urlopen(api_request)
 
 data = json.loads(response.read())
