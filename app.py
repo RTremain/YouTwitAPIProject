@@ -1,5 +1,6 @@
 import tweepy
 import time
+
 from config import CONSUMER_KEY
 from config import CONSUMER_SECRET
 from config import ACCESS_KEY
@@ -9,8 +10,8 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-file_name = 'last_seen_id.txt'
 
+file_name = 'last_seen_id.txt'
 
 # TODO integrate youtube api 3 into the twitter bot response
 
@@ -27,6 +28,7 @@ def store_last_seen_id(last_seen_id, file_name):
     f_write.write(str(last_seen_id))
     f_write.close()
     return
+# If you want to test, paste 1065123470370111488 in the last_seen_id.txt
 
 
 def reply_to_tweets():
@@ -39,7 +41,9 @@ def reply_to_tweets():
     for mention in reversed(mentions):
         print(str(mention.id) + ' - ' + mention.full_text, flush=True)
         last_seen_id = mention.id
-        store_last_seen_id(last_seen_id, file_name)
+        # Stores the last seen id in the txt
+        # store_last_seen_id(last_seen_id, file_name)
+        print(mention.__dict__)
 
         if '!details' in mention.full_text.lower():
             try:
@@ -49,23 +53,22 @@ def reply_to_tweets():
                     "urls")).split(",")
                 expanded_url = urls[1]
                 expanded_url = expanded_url[18:len(expanded_url)-1]
-                if 'youtube.com/watchv?=' in expanded_url:
+                print(expanded_url)
+                if 'youtube.com/watch?v=' in expanded_url:
                     # If you want an @mention to go out from the bot, add the following to the update_status:
                     # '@' + mention.user.screen_name
-                    api.update_status(
-                        "Functionality is not yet working for this feature.", last_seen_id)
+                    # api.update_status("Functionality is not yet working for this feature.", last_seen_id)
+                    print("Youtube Video Detected.")
                 else:
-                    api.update_status(
-                        "Please include a youtube link to a specific video.")
-                    # print(expanded_url)
+                    # api.update_status("Please include a youtube link to a specific video.")
+                    print(expanded_url)
             except:
-                # print("No subject content found.")
-                api.update_status(
-                    "Please include a youtube link to analyze.", last_seen_id)
+                print("No subject content found.")
+                print(expanded_url)
+                # api.update_status("Please include a youtube link to analyze.", last_seen_id)
         else:
-            #print('No Request Found')
-            api.update_status(
-                "Please include one of the requests in my profile.", last_seen_id)
+            print('No Request Found')
+            # api.update_status("Please include one of the requests in my profile.", last_seen_id)
 
 
 reply_to_tweets()
