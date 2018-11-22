@@ -1,6 +1,6 @@
 import tweepy
 import time
-
+import ytAPI
 from config import CONSUMER_KEY
 from config import CONSUMER_SECRET
 from config import ACCESS_KEY
@@ -58,7 +58,9 @@ def reply_to_tweets():
                     # If you want an @mention to go out from the bot, add the following to the update_status:
                     # '@' + mention.user.screen_name
                     # api.update_status("Functionality is not yet working for this feature.", last_seen_id)
-                    print("Youtube Video Detected.")
+                    video_id = expanded_url.split("youtube.com/watch?v=",1)[1]
+                    print("Youtube Video Detected. " + video_id)
+                    get_video_object(video_id)
                 else:
                     # api.update_status("Please include a youtube link to a specific video.")
                     print(expanded_url)

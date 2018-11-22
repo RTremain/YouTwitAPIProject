@@ -11,20 +11,39 @@ import urllib.request
 # https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=CHANNEL_ID&key=API_KEY
 #
 # https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id=VIDEO_ID&key=API_KEY
+
 test_video_id = 'sQYJJFLxaaw'
 # A video that contains special characters to test encoding
 test_video_id_containing_special_characters = 'Vzl93kp37oM'
-video_id = test_video_id
-video_api_url = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id="
-video_api_request = video_api_url + video_id + "&key=" + GOOGLE_API_KEY
-print(video_api_request)
-response = urllib.request.urlopen(video_api_request)
 
-data = json.loads(response.read())
-data = str(data).encode("utf-8")
+
+def get_video_object (str)
+    video_id = str
+    video_api_url = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id="
+    video_api_request = video_api_url + video_id + "&key=" + GOOGLE_API_KEY
+    print(video_api_request)
+    response = urllib.request.urlopen(video_api_request)
+
+    data = json.loads(response.read())
+    data = str(data).encode("utf-8")
+
+    # print(str(data).encode("utf-8"))
+    print(data)
+    f = open("channelobject.txt", "w+")
+    f.write(str(data))
+    f.close()
+
+# video_id = test_video_id
+# video_api_url = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id="
+# video_api_request = video_api_url + video_id + "&key=" + GOOGLE_API_KEY
+# print(video_api_request)
+# response = urllib.request.urlopen(video_api_request)
+
+# data = json.loads(response.read())
+# data = str(data).encode("utf-8")
 
 # print(str(data).encode("utf-8"))
-print(data)
-f = open("channelobject.txt", "w+")
-f.write(str(data))
-f.close()
+# print(data)
+# f = open("channelobject.txt", "w+")
+# f.write(str(data))
+# f.close()
