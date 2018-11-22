@@ -4,7 +4,12 @@ from config import GOOGLE_API_KEY
 import json
 import urllib.request
 # encoding: utf-8
+# https://www.googleapis.com/youtube/v3/channels?part=id,+snippet&id=CHANNEL_ID&key=API_KEY
+# Following is a search function I don't completely understand
+# channelid can be changed to videoid, although I don't understand why it retrieves the channels or videos it does.
+# Retrieved information seems to have nothing to do with the videoid or channelid provided
 # https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=CHANNEL_ID&key=API_KEY
+#
 # https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet&id=VIDEO_ID&key=API_KEY
 test_video_id = 'sQYJJFLxaaw'
 # A video that contains special characters to test encoding
