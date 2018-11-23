@@ -1,6 +1,14 @@
 import tweepy
 import time
-import ytAPI
+import json
+from ytAPI import get_video_tags
+from ytAPI import get_video_channel
+from ytAPI import get_video_upload_time
+from ytAPI import get_video_upload_date
+from ytAPI import get_video_dislikes
+from ytAPI import get_video_title
+from ytAPI import get_video_views
+from ytAPI import get_video_likes
 from config import CONSUMER_KEY
 from config import CONSUMER_SECRET
 from config import ACCESS_KEY
@@ -38,43 +46,70 @@ def reply_to_tweets():
     mentions = api.mentions_timeline(
         last_seen_id,
         tweet_mode='extended')
+
     for mention in reversed(mentions):
         print(str(mention.id) + ' - ' + mention.full_text, flush=True)
         last_seen_id = mention.id
         # Stores the last seen id in the txt
-        # store_last_seen_id(last_seen_id, file_name)
-        print(mention.__dict__)
+        # DO NOT FORGET TO ADD THIS BACK IN
+        store_last_seen_id(last_seen_id, file_name)
+        # print(mention)
 
         if '!details' in mention.full_text.lower():
             try:
-                # This nightmare right here gets the expanded_url from a tweet.
                 # If it fails to find a link, it hits an exception and asks for a proper link
-                urls = str(mention.entities.get(
-                    "urls")).split(",")
-                expanded_url = urls[1]
-                expanded_url = expanded_url[18:len(expanded_url)-1]
-                print(expanded_url)
+                for item in mention.entities['urls']:
+                    expanded_url = item['expanded_url']
+
                 if 'youtube.com/watch?v=' in expanded_url:
                     # If you want an @mention to go out from the bot, add the following to the update_status:
                     # '@' + mention.user.screen_name
-                    # api.update_status("Functionality is not yet working for this feature.", last_seen_id)
-                    video_id = expanded_url.split("youtube.com/watch?v=",1)[1]
-                    print("Youtube Video Detected. " + video_id)
-                    get_video_object(video_id)
+                    video_id = expanded_url.split("youtube.com/watch?v=", 1)[1]
+
+                    api.update_status('@' + mention.user.screen_name + " " +
+                                      'Title: ' + get_video_title(video_id) +
+                                      '\nChannel: ' + get_video_channel(video_id) +
+                                      '\nViews: ' + get_video_views(video_id) +
+                                      '\nLikes: ' + get_video_likes(video_id) +
+                                      '\nDislikes: ' + get_video_dislikes(video_id) +
+                                      '\nPublish Date: ' + get_video_upload_date(video_id) +
+                                      '\nPublish Time: ' + get_video_upload_time(video_id), last_seen_id)
                 else:
-                    # api.update_status("Please include a youtube link to a specific video.")
-                    print(expanded_url)
-            except:
-                print("No subject content found.")
-                print(expanded_url)
-                # api.update_status("Please include a youtube link to analyze.", last_seen_id)
+                    api.update_status('@' + mention.user.screen_name + " " +
+                                      "Please include a youtube link to a specific video.", last_seen_id)
+
+            except Exception as e:
+                print(e)
+                api.update_status('@' + mention.user.screen_name + " " +
+                                  "An error has occurred.", last_seen_id)
+
+        if'!tags' in mention.full_text.lower():
+            try:
+                for item in mention.entities['urls']:
+                    expanded_url = item['expanded_url']
+
+                    if 'youtube.com/watch?v=' in expanded_url:
+                        # If you want an @mention to go out from the bot, add the following to the update_status:
+                        video_id = expanded_url.split(
+                            "youtube.com/watch?v=", 1)[1]
+                        # print(video_id)
+                        api.update_status('@' + mention.user.screen_name + " " +
+                                          'Tags: ' + get_video_tags(video_id), last_seen_id)
+                    else:
+                        print('Error in getting tags')
+                        api.update_status('@' + mention.user.screen_name + " " +
+                                          "Please include a youtube link to a specific video.", last_seen_id)
+            except Exception as e:
+                print(e)
+                api.update_status('@' + mention.user.screen_name + " " +
+                                  "No tags found.", last_seen_id)
         else:
-            print('No Request Found')
-            # api.update_status("Please include one of the requests in my profile.", last_seen_id)
+            api.update_status('@' + mention.user.screen_name + " " +
+                              "Please include one of the requests in my profile.", last_seen_id)
 
 
-reply_to_tweets()
+# reply_to_tweets()
 # Every 15 seconds get all new mentions, and run reply_to_tweets()
-# while True:
-#     reply_to_tweets()
-#     time.sleep(15)
+while True:
+    reply_to_tweets()
+    time.sleep(15)
